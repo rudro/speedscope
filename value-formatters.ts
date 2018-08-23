@@ -1,4 +1,5 @@
-import {FileFormat} from './file-format-spec'
+import { FileFormat } from './file-format-spec'
+import { zeroPad } from './utils'
 
 export interface ValueFormatter {
   unit: FileFormat.ValueUnit
@@ -25,11 +26,11 @@ export class TimeFormatter implements ValueFormatter {
   format(v: number) {
     const s = v * this.multiplier
 
-    if (s / 60 >= 1) return `${(s / 60).toFixed(2)}min`
-    if (s / 1 >= 1) return `${s.toFixed(2)}s`
-    if (s / 1e-3 >= 1) return `${(s / 1e-3).toFixed(2)}ms`
-    if (s / 1e-6 >= 1) return `${(s / 1e-6).toFixed(2)}µs`
-    else return `${(s / 1e-9).toFixed(2)}ns`
+    const minutes = zeroPad(Math.floor(s / 60).toString(10), 2)
+    const seconds = zeroPad(Math.floor(s % 60).toString(10), 2)
+    const milliseconds = zeroPad((Math.floor(s * 1000) % 1000).toString(10), 3)
+
+    return `${minutes}:${seconds}.${milliseconds}`
   }
 }
 
